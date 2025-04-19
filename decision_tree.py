@@ -3,6 +3,40 @@ import pandas as pd
 import numpy as np
 
 
+def entropy(labels):
+    label_counts = pd.Series(labels).value_counts(normalize=True)
+    return -sum(label_counts * np.log2(label_counts + 1e-9))
+
+
+def find_best_attribute_index(objects, attributes):
+    best_gain = -1
+    best_attr_index = -1
+
+    base_entropy = entropy([row[-1] for row in objects])
+
+    for i, attr in enumerate(attributes):
+        values = [row[i] for row in objects]
+        weighted_entropy = 0.0
+
+        for value in set(values):
+            subset = [row for row in objects if row[i] == value]
+            weight = len(subset) / len(objects)
+            weighted_entropy += weight * entropy([row[-1] for row in subset])
+
+        gain = base_entropy - weighted_entropy
+
+        if gain > best_gain:
+            best_gain = gain
+            best_attr_index = i
+
+    return best_attr_index
+
+
+def most_common_class(objects):
+    labels = [row[-1] for row in objects]
+    return pd.Series(labels).value_counts().idxmax()
+
+
 def ID3(attributes, objects, depth =0, max_depth=None):
     if not objects:
         return "Brak danych"
