@@ -1,4 +1,3 @@
-import math
 import pandas as pd
 import numpy as np
 
@@ -37,7 +36,7 @@ def most_common_class(objects):
     return pd.Series(labels).value_counts().idxmax()
 
 
-def ID3(attributes, objects, depth =0, max_depth=None):
+def ID3(attributes, objects, depth=0, max_depth=None):
     if not objects:
         return "Brak danych"
 
@@ -55,8 +54,30 @@ def ID3(attributes, objects, depth =0, max_depth=None):
     attr_values = set(row[best_attr_index] for row in objects)
 
     for value in attr_values:
-        subset = [row[:best_attr_index] + row[best_attr_index + 1:] for row in objects if row[best_attr_index] == value]
-        new_attributes = attributes[:best_attr_index] + attributes[best_attr_index + 1:]
+        subset = [row[:best_attr_index] + row[best_attr_index + 1:]
+                  for row in objects if row[best_attr_index] == value]
+        new_attributes = (attributes[:best_attr_index] +
+                          attributes[best_attr_index + 1:])
         subtree = ID3(new_attributes, subset, depth + 1, max_depth)
         tree[best_attr][value] = subtree
     return tree
+
+
+def predict(tree, sample, attributes):
+    if not isinstance(tree, dict):
+        return 1 if tree == 1 else 0
+
+    attribute = next(iter(tree))
+    idx = attributes.index(attribute)
+    value = sample.iloc[idx]
+
+    subtree = tree[attribute].get(value)
+    if value not in ['x', 'o', 'b']:
+        print(f'Invalid value: {value}')
+        value = 'b'
+
+    new_attributes = attributes[:idx] + attributes[idx+1:]
+    new_sample_values = list(sample[:idx]) + list(sample[idx+1:])
+    new_sample = pd.Series(new_sample_values, index=new_attributes)
+
+    return predict(subtree, new_sample, new_attributes)
