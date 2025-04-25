@@ -4,8 +4,7 @@ from sklearn.metrics import confusion_matrix, accuracy_score
 from sklearn.metrics import classification_report
 import pprint
 from decision_tree import ID3, predict
-import matplotlib.pyplot as plt
-
+# import matplotlib.pyplot as plt
 
 
 def evaluate_model(tree, X_test, y_test, attributes):
@@ -43,7 +42,7 @@ def load_and_prepare_data(filepath):
     return X, y
 
 
-def split_data(X, y, test_size=0.3, val_size=0.15, random_state=42):
+def split_data(X, y, test_size=0.2, val_size=0.2, random_state=42):
     X_train, X_temp, y_train, y_temp = train_test_split(
         X, y, test_size=test_size + val_size, random_state=random_state)
 
@@ -90,22 +89,23 @@ if __name__ == "__main__":
         pp = pprint.PrettyPrinter(indent=4)
         pp.pprint(tree)
 
+    # Uncomment the following lines to visualize the accuracy vs. tree depth
+    # depths = range(1, 26)
+    # accuracies = []
 
-    depths = range(1, 26)
-    accuracies = []
+    # for depth in depths:
+    #     tree = ID3(attributes, objects, max_depth=depth)
+    #     val_results = evaluate_model(tree, X_test, y_test, attributes)
+    #     accuracies.append(val_results['accuracy'] * 100)  # convert to
+    # percentage
 
-    for depth in depths:
-        tree = ID3(attributes, objects, max_depth=depth)
-        val_results = evaluate_model(tree, X_test, y_test, attributes)
-        accuracies.append(val_results['accuracy'] * 100)  # convert to percentage
-
-    plt.figure(figsize=(10, 6))
-    plt.plot(depths, accuracies, marker='o')
-    plt.title('Test Accuracy vs. Tree Depth')
-    plt.xlabel('Tree Depth')
-    plt.ylabel('Test Accuracy (%)')
-    plt.grid(True)
-    plt.xticks(depths)
-    plt.tight_layout()
-    plt.savefig('test_accuracy_vs_depth.png')
-    plt.show()
+    # plt.figure(figsize=(10, 6))
+    # plt.plot(depths, accuracies, marker='o')
+    # plt.title('Test Accuracy vs. Tree Depth')
+    # plt.xlabel('Tree Depth')
+    # plt.ylabel('Test Accuracy (%)')
+    # plt.grid(True)
+    # plt.xticks(depths)
+    # plt.tight_layout()
+    # plt.savefig('test_accuracy_vs_depth.png')
+    # plt.show()
