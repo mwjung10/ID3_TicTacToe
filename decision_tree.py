@@ -37,14 +37,24 @@ def most_common_class(objects):
 
 
 def ID3(attributes, objects, depth=0, max_depth=None):
+
+    if depth >= 8:
+        print(f"Current depth: {depth}, Attributes left: {len(attributes)}")
+
     if not objects:
+        if depth == 7:
+            print(f"Current depth: {depth}, brak danych")
         return "Brak danych"
 
     labels = [row[-1] for row in objects]
     if all(label == labels[0] for label in labels):
+        if depth == 7:
+            print(f"Current depth: {depth}, all labels are the same")
         return labels[0]
 
     if not attributes or (max_depth is not None and depth == max_depth):
+        if depth == 7:
+            print(f"Current depth: {depth}, not enough attributes")
         return most_common_class(objects)
 
     best_attr_index = find_best_attribute_index(objects, attributes)
@@ -60,6 +70,8 @@ def ID3(attributes, objects, depth=0, max_depth=None):
                           attributes[best_attr_index + 1:])
         subtree = ID3(new_attributes, subset, depth + 1, max_depth)
         tree[best_attr][value] = subtree
+
+
     return tree
 
 
